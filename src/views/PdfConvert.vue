@@ -151,7 +151,7 @@ export default {
         signFormData.append('filename', this.selectedFile.name)
         signFormData.append('token', token)
 
-        const signResponse = await fetch('/api/oss/sign', {
+        const signResponse = await fetch('/oss/sign', {
           method: 'POST',
           body: signFormData
         })
