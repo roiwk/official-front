@@ -25,6 +25,12 @@
     <div class="container">
       <h1>📄 PDF 转换</h1>
 
+      <div v-if="pageLoading" class="page-loading">
+        <div class="page-spinner"></div>
+        <p class="page-loading-text">正在加载页面...</p>
+      </div>
+
+      <template v-else>
       <div v-if="errorMessage" class="message error">{{ errorMessage }}</div>
       <div v-if="successMessage" class="message success">{{ successMessage }}</div>
 
@@ -75,6 +81,7 @@
           </a>
         </div>
       </div>
+      </template>
     </div>
   </div>
 </template>
@@ -86,6 +93,7 @@ export default {
   name: 'PdfConvert',
   data() {
     return {
+      pageLoading: true,
       selectedFile: null,
       targetFormat: 'doc',
       maxFileSize: 20 * 1024 * 1024,
@@ -104,8 +112,8 @@ export default {
   },
   methods: {
     async loadPageData() {
+      this.pageLoading = true
       try {
-        // 兼容 token 和 t 两种参数名
         const token = this.$route.query.t || this.$route.query.token || ''
         const params = { t: token }
         const response = await pdfApi.getConvert(params)
@@ -115,6 +123,8 @@ export default {
         }
       } catch (error) {
         console.error('加载页面数据失败:', error)
+      } finally {
+        this.pageLoading = false
       }
     },
     handleFileChange(event) {
@@ -525,6 +535,29 @@ input[type="file"] {
 .progress-step.completed .step-icon {
   background-color: #34a853;
   color: white;
+}
+
+.page-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+}
+
+.page-spinner {
+  width: 44px;
+  height: 44px;
+  border: 4px solid #e8edf2;
+  border-top: 4px solid #1a73e8;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-bottom: 16px;
+}
+
+.page-loading-text {
+  color: #666;
+  font-size: 0.95em;
 }
 
 @media (min-width: 600px) {

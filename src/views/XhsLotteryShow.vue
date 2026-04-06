@@ -6,7 +6,12 @@
       </div>
 
       <div class="content">
-        <div v-if="!lottery || !lottery.is_configured" class="not-configured-message">
+        <div v-if="pageLoading" class="page-loading">
+          <div class="page-spinner"></div>
+          <p class="page-loading-text">正在加载抽奖信息...</p>
+        </div>
+
+        <div v-else-if="!lottery || !lottery.is_configured" class="not-configured-message">
           <div class="icon">⏳</div>
           <h2>抽奖规则设置中</h2>
           <p>活动创建者正在设置抽奖规则<br>请稍后再来查看</p>
@@ -98,6 +103,7 @@ export default {
   name: 'XhsLotteryShow',
   data() {
     return {
+      pageLoading: true,
       lottery: null,
       countdownText: '计算中...',
       countdownInterval: null
@@ -129,6 +135,7 @@ export default {
   },
   methods: {
     async loadLottery() {
+      this.pageLoading = true
       try {
         const params = { lottery_id: this.$route.query.lottery_id }
         const response = await lotteryApi.getShow(params)
@@ -140,6 +147,8 @@ export default {
         }
       } catch (error) {
         console.error('加载抽奖信息失败:', error)
+      } finally {
+        this.pageLoading = false
       }
     },
     startCountdown() {
@@ -459,6 +468,34 @@ export default {
   font-size: 0.8em;
   opacity: 0.9;
   margin-top: 4px;
+}
+
+.page-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+}
+
+.page-spinner {
+  width: 44px;
+  height: 44px;
+  border: 4px solid rgba(255, 107, 107, 0.2);
+  border-top: 4px solid #ff6b6b;
+  border-radius: 50%;
+  animation: pageSpin 0.8s linear infinite;
+  margin-bottom: 16px;
+}
+
+.page-loading-text {
+  color: #888;
+  font-size: 0.95em;
+}
+
+@keyframes pageSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 @media (max-width: 600px) {

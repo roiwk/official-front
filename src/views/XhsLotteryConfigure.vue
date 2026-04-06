@@ -4,6 +4,12 @@
       <h1>🎁 小红书抽奖设置</h1>
       <p class="subtitle">配置您的抽奖活动信息</p>
 
+      <div v-if="pageLoading" class="page-loading">
+        <div class="page-spinner"></div>
+        <p class="page-loading-text">正在加载配置信息...</p>
+      </div>
+
+      <template v-else>
       <div v-if="errorMessage" class="message error">{{ errorMessage }}</div>
       <div v-if="successMessage" class="message success">{{ successMessage }}</div>
 
@@ -314,6 +320,8 @@
         </button>
       </form>
 
+      </template>
+
       <!-- 自定义弹窗 -->
       <div v-if="modal.show" class="custom-modal" @click.self="closeModal">
         <div class="custom-modal-content">
@@ -356,6 +364,7 @@ export default {
   name: 'XhsLotteryConfigure',
   data() {
     return {
+      pageLoading: true,
       lottery: null,
       errorMessage: '',
       successMessage: '',
@@ -440,17 +449,17 @@ export default {
               allow_duplicate: this.lottery.allow_duplicate ?? false,
               unique_by_user: this.lottery.unique_by_user ?? true
             }
-            // 初始化时也提取URL
             this.extractUrl(this.form.xhs_article_url)
           }
         }
       } catch (error) {
         console.error('加载失败:', error)
-        // Token 过期已在拦截器中处理跳转，这里不需要额外处理
         if (error.message && error.message.includes('Token')) {
           return
         }
         this.errorMessage = error.message || '加载失败，请重试'
+      } finally {
+        this.pageLoading = false
       }
     },
     async submitForm() {
@@ -1174,5 +1183,33 @@ textarea {
 .custom-modal-btn-secondary:hover {
   background: #5a6268;
   transform: translateY(-2px);
+}
+
+.page-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+}
+
+.page-spinner {
+  width: 44px;
+  height: 44px;
+  border: 4px solid #e8edf2;
+  border-top: 4px solid #667eea;
+  border-radius: 50%;
+  animation: pageSpin 0.8s linear infinite;
+  margin-bottom: 16px;
+}
+
+.page-loading-text {
+  color: #666;
+  font-size: 0.95em;
+}
+
+@keyframes pageSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 </style>
