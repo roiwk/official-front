@@ -1,7 +1,10 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
+import { setRouter } from './api'
 import './style.css'
+
+setRouter(router)
 
 const canonicalUrl = import.meta.env.VITE_APP_URL
 if (canonicalUrl) {

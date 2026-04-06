@@ -145,9 +145,10 @@ export default {
             this.startCountdown()
           }
         }
+        this.pageLoading = false
       } catch (error) {
+        if (error.message && error.message.includes('Token')) return
         console.error('加载抽奖信息失败:', error)
-      } finally {
         this.pageLoading = false
       }
     },

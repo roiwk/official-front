@@ -452,13 +452,11 @@ export default {
             this.extractUrl(this.form.xhs_article_url)
           }
         }
+        this.pageLoading = false
       } catch (error) {
+        if (error.message && error.message.includes('Token')) return
         console.error('加载失败:', error)
-        if (error.message && error.message.includes('Token')) {
-          return
-        }
         this.errorMessage = error.message || '加载失败，请重试'
-      } finally {
         this.pageLoading = false
       }
     },

@@ -108,7 +108,23 @@ export default {
     }
   },
   mounted() {
-    this.loadPageData()
+    const token = this.$route.query.t || this.$route.query.token || ''
+    const saved = sessionStorage.getItem(`pdfConvert_${token}`)
+    if (saved) {
+      try {
+        const { link, expiry } = JSON.parse(saved)
+        if (Date.now() < expiry) {
+          this.downloadLink = link
+          this.successMessage = '转换成功~~~'
+          this.pageLoading = false
+        } else {
+          sessionStorage.removeItem(`pdfConvert_${token}`)
+        }
+      } catch { sessionStorage.removeItem(`pdfConvert_${token}`) }
+    }
+    if (!this.downloadLink) {
+      this.loadPageData()
+    }
   },
   methods: {
     async loadPageData() {
@@ -121,9 +137,10 @@ export default {
           this.maxFileSize = response.data.max_file_size
           this.supportedFormats = response.data.supportedFormats || {}
         }
+        this.pageLoading = false
       } catch (error) {
+        if (error.message && error.message.includes('Token')) return
         console.error('加载页面数据失败:', error)
-      } finally {
         this.pageLoading = false
       }
     },
@@ -167,12 +184,6 @@ export default {
           throw new Error('获取签名失败')
         }
 
-        // 检查响应中是否有 token 过期提示
-        if (signData.success === false && signData.redirect === '/subscribe-me') {
-          window.location.href = '/subscribe-me'
-          return
-        }
-
         // 步骤2: 上传文件到OSS
         this.currentStep = 2
         this.progressText = '(2/3) 上传中...'
@@ -214,6 +225,7 @@ export default {
         if (convertResponse && convertResponse.success) {
           this.successMessage = '转换成功~~~'
           this.downloadLink = convertResponse.data.download_link
+          sessionStorage.setItem(`pdfConvert_${token}`, JSON.stringify({ link: this.downloadLink, expiry: Date.now() + 5 * 60 * 1000 }))
         } else {
           throw new Error(convertResponse?.error || '转换失败')
         }

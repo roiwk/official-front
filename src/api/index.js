@@ -1,7 +1,19 @@
 import axios from 'axios'
 
-// 开发环境：通过 /api 前缀走 vite proxy 代理到后端
-// 生产环境：通过 VITE_API_BASE_URL 直接请求后端
+let _router = null
+
+export function setRouter(router) {
+  _router = router
+}
+
+function redirectToSubscribe() {
+  if (_router && _router.currentRoute.value.path !== '/subscribe-me') {
+    _router.replace('/subscribe-me')
+  } else if (window.location.pathname !== '/subscribe-me') {
+    window.location.href = '/subscribe-me'
+  }
+}
+
 const getBaseURL = () => {
   if (import.meta.env.VITE_API_BASE_URL) {
     return import.meta.env.VITE_API_BASE_URL
@@ -21,52 +33,33 @@ const api = axios.create({
   }
 })
 
-// 请求拦截器
 api.interceptors.request.use(
-  config => {
-    // 可以从localStorage获取token等
-    return config
-  },
-  error => {
-    return Promise.reject(error)
-  }
+  config => config,
+  error => Promise.reject(error)
 )
 
-// 响应拦截器
 api.interceptors.response.use(
   response => {
     const data = response.data
     
-    // 检查是否有 token 过期或无效的响应
     if (data && data.success === false && data.redirect === '/subscribe-me') {
-      // 跳转到订阅页面
-      if (window.location.pathname !== '/subscribe-me') {
-        window.location.href = '/subscribe-me'
-      }
+      redirectToSubscribe()
       return Promise.reject(new Error(data.error || 'Token无效或已过期'))
     }
     
     return data
   },
   error => {
-    // 处理 HTTP 错误响应
     if (error.response) {
       const data = error.response.data
       
-      // 检查是否是 token 过期或无效的响应
       if (data && data.success === false && data.redirect === '/subscribe-me') {
-        // 跳转到订阅页面
-        if (window.location.pathname !== '/subscribe-me') {
-          window.location.href = '/subscribe-me'
-        }
+        redirectToSubscribe()
         return Promise.reject(new Error(data.error || 'Token无效或已过期'))
       }
       
-      // 401 未授权错误，可能是 token 问题
       if (error.response.status === 401 && data && data.redirect === '/subscribe-me') {
-        if (window.location.pathname !== '/subscribe-me') {
-          window.location.href = '/subscribe-me'
-        }
+        redirectToSubscribe()
         return Promise.reject(new Error(data.error || 'Token无效或已过期'))
       }
     }
