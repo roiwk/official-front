@@ -155,27 +155,14 @@ export default {
         signFormData.append('filename', this.selectedFile.name)
         signFormData.append('token', token)
 
-        const signResponse = await fetch('/api/oss/sign', {
-          method: 'POST',
-          body: signFormData
-        })
+        const signData = await pdfApi.ossSign(signFormData)
 
-        if (!signResponse.ok) {
-          // 检查是否是 token 过期
-          if (signResponse.status === 401) {
-            const errorData = await signResponse.json().catch(() => ({}))
-            if (errorData.redirect === '/subscribe-me') {
-              window.location.href = '/subscribe-me'
-              return
-            }
-          }
+        if (!signData || !signData.host) {
           throw new Error('获取签名失败')
         }
 
-        const signData = await signResponse.json()
-        
         // 检查响应中是否有 token 过期提示
-        if (signData && signData.success === false && signData.redirect === '/subscribe-me') {
+        if (signData.success === false && signData.redirect === '/subscribe-me') {
           window.location.href = '/subscribe-me'
           return
         }
