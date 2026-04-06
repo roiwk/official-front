@@ -2,7 +2,7 @@
   <div class="min-h-screen bg-gradient-to-br from-indigo-500 via-purple-500 to-indigo-600 flex items-center justify-center p-4 md:p-8">
     <div class="bg-white rounded-2xl shadow-2xl p-6 md:p-8 max-w-6xl w-full transition-all duration-200 hover:shadow-3xl">
       <h1 class="text-4xl md:text-5xl font-bold text-center mb-8 md:mb-12 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-        微信公众号管理平台
+        {{ appTitle }}
       </h1>
       
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
@@ -32,6 +32,7 @@ export default {
   name: 'Home',
   data() {
     return {
+      appTitle: import.meta.env.VITE_APP_TITLE || '公众平台',
       menuItems: [
         {
           icon: '📰',

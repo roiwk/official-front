@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /token-input
+Disallow: /subscribe-me
+Disallow: /download
+
+Sitemap: https://wx.roiwk.cn/sitemap.xml
