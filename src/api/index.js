@@ -1,20 +1,16 @@
 import axios from 'axios'
 
-// 根据环境变量设置 baseURL
-// 开发环境：使用相对路径，通过 vite 代理避免跨域
-// 生产环境：如果使用 Nginx 反向代理，使用相对路径；如果直接请求后端，使用完整 URL
+// 开发环境：通过 /api 前缀走 vite proxy 代理到后端
+// 生产环境：通过 VITE_API_BASE_URL 直接请求后端
 const getBaseURL = () => {
-  // 如果设置了 VITE_API_BASE_URL 环境变量，优先使用
   if (import.meta.env.VITE_API_BASE_URL) {
     return import.meta.env.VITE_API_BASE_URL
   }
-  // 开发环境使用相对路径（通过 vite 代理）
   if (import.meta.env.DEV) {
     return '/api'
   }
-  // 生产环境默认使用相对路径（假设使用 Nginx 反向代理）
-  // 如果需要直接请求后端，可以在构建时设置 VITE_API_BASE_URL 环境变量
-  return '/api'
+  console.warn('VITE_API_BASE_URL is not set, API requests may fail')
+  return ''
 }
 
 const api = axios.create({

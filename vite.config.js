@@ -12,12 +12,7 @@ export default defineConfig(({ mode }) => {
         '/api': {
           target: env.VITE_DEV_PROXY_TARGET || 'http://127.0.0.1:8080',
           changeOrigin: true,
-          rewrite: (path) => {
-            if (path.startsWith('/api/token')) {
-              return path
-            }
-            return path.replace(/^\/api/, '')
-          }
+          rewrite: (path) => path.replace(/^\/api/, '')
         }
       }
     },
