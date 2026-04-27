@@ -6,11 +6,13 @@
       </h1>
       
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-        <div 
+        <component 
+          :is="item.path.startsWith('http') ? 'a' : 'router-link'"
           v-for="item in menuItems" 
           :key="item.path"
-          @click="goTo(item.path)"
-          class="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-500 p-6 md:p-8 text-white cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+          :[item.path.startsWith('http')?'href':'to']="item.path"
+          :target="item.path.startsWith('http') ? '_blank' : undefined"
+          class="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-500 p-6 md:p-8 text-white cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-2xl block"
         >
           <div class="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           <div class="relative z-10">
@@ -21,15 +23,25 @@
             <div class="text-sm md:text-base opacity-90">{{ item.desc }}</div>
           </div>
           <div class="absolute bottom-0 left-0 right-0 h-1 bg-white/30 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
-        </div>
+        </component>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import { useHead } from '@unhead/vue'
+
 export default {
   name: 'Home',
+  setup() {
+    useHead({
+      title: '首页 - 公众平台',
+      meta: [
+        { name: 'description', content: '公众平台提供每日60秒读懂世界新闻、AI资讯快报、PDF转换工具、小红书抽奖配置等一系列实用工具。' }
+      ]
+    })
+  },
   data() {
     return {
       appTitle: import.meta.env.VITE_APP_TITLE || '公众平台',

@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory, createMemoryHistory } from 'vue-router'
 import Home from '../views/Home.vue'
 import PdfConvert from '../views/PdfConvert.vue'
 import PdfConvertToPdf from '../views/PdfConvertToPdf.vue'
@@ -103,7 +103,7 @@ const routes = [
 ]
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: import.meta.env.SSR ? createMemoryHistory() : createWebHistory(),
   routes
 })
 
@@ -112,4 +112,5 @@ router.afterEach((to) => {
   document.title = pageTitle ? `${pageTitle} - ${appTitle}` : appTitle
 })
 
+export { routes }
 export default router

@@ -89,10 +89,19 @@
 </template>
 
 <script>
+import { useHead } from '@unhead/vue'
 import { aiNewsApi } from '../api'
 
 export default {
   name: 'AiNewsPage',
+  setup() {
+    useHead({
+      title: 'AI资讯快报 - 公众平台',
+      meta: [
+        { name: 'description', content: '为您提供最新最全的AI领域资讯快报，涵盖人工智能前沿技术、行业动态和深度解析。' }
+      ]
+    })
+  },
   data() {
     return {
       currentDate: new Date().toISOString().split('T')[0],

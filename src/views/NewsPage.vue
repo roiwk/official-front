@@ -111,10 +111,19 @@
 </template>
 
 <script>
+import { useHead } from '@unhead/vue'
 import { newsApi } from '../api'
 
 export default {
   name: 'NewsPage',
+  setup() {
+    useHead({
+      title: '60秒读懂世界新闻 - 公众平台',
+      meta: [
+        { name: 'description', content: '每天60秒读懂世界，为您提供最新鲜的全球资讯快报和精选新闻摘要，支持图片、文本和Markdown格式导出。' }
+      ]
+    })
+  },
   data() {
     return {
       currentDate: new Date().toISOString().split('T')[0],

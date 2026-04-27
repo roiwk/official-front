@@ -1,23 +1,27 @@
-import { createApp } from 'vue'
+import { ViteSSG } from 'vite-ssg'
 import App from './App.vue'
-import router from './router'
+import { routes } from './router'
 import { setRouter } from './api'
 import './style.css'
 
-setRouter(router)
+export const createApp = ViteSSG(
+  App,
+  { routes },
+  ({ app, router, head, isClient }) => {
+    setRouter(router)
 
-const canonicalUrl = import.meta.env.VITE_APP_URL
-if (canonicalUrl) {
-  const canonical = new URL(canonicalUrl)
-  if (window.location.hostname !== canonical.hostname) {
-    const target = new URL(window.location.href)
-    target.protocol = canonical.protocol
-    target.hostname = canonical.hostname
-    target.port = canonical.port
-    window.location.replace(target.href)
+    if (isClient) {
+      const canonicalUrl = import.meta.env.VITE_APP_URL
+      if (canonicalUrl) {
+        const canonical = new URL(canonicalUrl)
+        if (window.location.hostname !== canonical.hostname) {
+          const target = new URL(window.location.href)
+          target.protocol = canonical.protocol
+          target.hostname = canonical.hostname
+          target.port = canonical.port
+          window.location.replace(target.href)
+        }
+      }
+    }
   }
-}
-
-const app = createApp(App)
-app.use(router)
-app.mount('#app')
+)

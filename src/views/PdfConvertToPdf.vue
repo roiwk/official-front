@@ -81,10 +81,19 @@
 </template>
 
 <script>
+import { useHead } from '@unhead/vue'
 import { pdfApi } from '../api'
 
 export default {
   name: 'PdfConvertToPdf',
+  setup() {
+    useHead({
+      title: '文件转PDF工具 - 公众平台',
+      meta: [
+        { name: 'description', content: '将各类常见文件格式(Word, Excel, PPT, 图片等)快速转换为标准PDF文件，方便浏览与打印。' }
+      ]
+    })
+  },
   data() {
     return {
       pageLoading: true,

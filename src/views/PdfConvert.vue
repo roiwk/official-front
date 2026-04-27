@@ -87,10 +87,19 @@
 </template>
 
 <script>
+import { useHead } from '@unhead/vue'
 import { pdfApi } from '../api'
 
 export default {
   name: 'PdfConvert',
+  setup() {
+    useHead({
+      title: 'PDF转换工具 - 公众平台',
+      meta: [
+        { name: 'description', content: '高效、安全的PDF格式转换工具。支持将PDF文件转换为Word(doc/docx)、Excel、PPT等多种常见格式。' }
+      ]
+    })
+  },
   data() {
     return {
       pageLoading: true,
