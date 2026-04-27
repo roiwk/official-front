@@ -13,7 +13,7 @@
     "vue-router": "^4.2.5"
   },
   "devDependencies": {
-    "@unhead/vue": "^3.1.0",
+    "@unhead/vue": "^1.11.20",
     "@vitejs/plugin-vue": "^5.0.0",
     "autoprefixer": "^10.4.23",
     "postcss": "^8.5.6",
